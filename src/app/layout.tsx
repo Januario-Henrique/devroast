@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { ThemeProvider } from "@/lib/theme";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
@@ -25,11 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${jetbrainsMono.variable} ${ibmPlexMono.variable} antialiased bg-bg-page min-h-screen`}>
-        <Navbar />
-        {children}
-      </body>
-    </html>
+    <ThemeProvider>
+      <html lang="en">
+        <body className={`${jetbrainsMono.variable} ${ibmPlexMono.variable} antialiased bg-bg-page min-h-screen`}>
+          <Navbar />
+          {children}
+        </body>
+      </html>
+    </ThemeProvider>
   );
 }

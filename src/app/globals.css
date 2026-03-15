@@ -4,6 +4,7 @@
   --font-mono: "JetBrains Mono", "IBM Plex Mono", monospace;
   --font-sans: "Inter", system-ui, sans-serif;
 
+  /* Dark mode colors (default) */
   --color-bg-page: #0A0A0A;
   --color-bg-surface: #0F0F0F;
   --color-bg-elevated: #1A1A1A;
@@ -32,10 +33,42 @@
   --color-syn-property: #98C379;
 }
 
+/* Light mode overrides */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg-page: #F2F3F0;
+    --color-bg-surface: #FFFFFF;
+    --color-bg-elevated: #FFFFFF;
+    --color-bg-input: #FFFFFF;
+
+    --color-border-primary: #CBCCC9;
+    --color-border-secondary: #E7E8E5;
+
+    --color-text-primary: #111111;
+    --color-text-secondary: #666666;
+    --color-text-tertiary: #666666;
+
+    --color-accent-green: #10B981;
+    --color-accent-red: #EF4444;
+    --color-accent-amber: #F59E0B;
+    --color-accent-cyan: #06B6D4;
+    --color-accent-blue: #3B82F6;
+    --color-accent-orange: #F97316;
+
+    --color-syn-keyword: #C678DD;
+    --color-syn-function: #61AFEF;
+    --color-syn-variable: #E06C75;
+    --color-syn-operator: #ABB2BF;
+    --color-syn-number: #D19A66;
+    --color-syn-string: #E5C07B;
+    --color-syn-property: #98C379;
+  }
+}
+
 @layer base {
   :root {
-    --background: #0A0A0A;
-    --foreground: #FAFAFA;
+    --background: var(--color-bg-page);
+    --foreground: var(--color-text-primary);
   }
 
   body {

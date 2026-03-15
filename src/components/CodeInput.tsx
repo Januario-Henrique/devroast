@@ -2,12 +2,28 @@
 
 import { useState } from "react";
 
-export function CodeInput() {
-  const [code, setCode] = useState("");
+export function CodeInput({ 
+  code, 
+  onCodeChange, 
+  onAnalyze, 
+  loading 
+}: { 
+  code: string;
+  onCodeChange: (code: string) => void;
+  onAnalyze: () => Promise<void> | void;
+  loading: boolean;
+}) {
   const [roastMode, setRoastMode] = useState(true);
+  const [localCode, setLocalCode] = useState(code);
 
-  const lines = code.split("\n");
+  const lines = localCode.split("\n");
   const lineCount = Math.max(lines.length, 16);
+
+  const handleCodeChange = (e) => {
+    const newCode = e.target.value;
+    setLocalCode(newCode);
+    onCodeChange(newCode);
+  };
 
   return (
     <div className="w-[780px]">
@@ -26,8 +42,8 @@ export function CodeInput() {
             ))}
           </div>
           <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={localCode}
+            onChange={handleCodeChange}
             placeholder="// paste your code here..."
             className="flex-1 bg-transparent p-4 pt-4 text-text-primary text-xs font-mono resize-none focus:outline-none min-h-[320px]"
             spellCheck={false}
@@ -57,7 +73,11 @@ export function CodeInput() {
           </span>
         </div>
 
-        <button className="bg-accent-green text-black px-6 py-2.5 rounded-md flex items-center gap-2 text-sm font-medium hover:opacity-90 transition-opacity">
+        <button
+          onClick={onAnalyze}
+          disabled={loading || !localCode.trim()}
+          className={`bg-accent-green text-black px-6 py-2.5 rounded-md flex items-center gap-2 text-sm font-medium hover:opacity-90 transition-opacity ${loading ? "opacity-50" : ""}`}
+        >
           $ roast_my_code
         </button>
       </div>
