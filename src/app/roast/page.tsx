@@ -113,7 +113,7 @@ export default function RoastPage() {
             <div className="flex flex-col gap-6">
               {/* Score Hero */}
               <div className="flex items-center gap-12">
-                <div className="relative w-[180px] h-[180px] flex items-center justify-center">
+                <div className="relative w-size-score-ring-lg h-size-score-ring-lg flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border-4 border-border-primary" />
                   <div className="absolute inset-0 rounded-full border-4 border-accent-green" style={{ clipPath: "polygon(0 0, 35% 0, 35% 100%, 0 100%)" }} />
                   <div className="absolute inset-0 rounded-full border-4 border-accent-amber" style={{ clipPath: "polygon(35% 0, 100% 0, 100% 30%, 35% 30%)" }} />

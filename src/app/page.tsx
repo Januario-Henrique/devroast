@@ -76,7 +76,7 @@ export default function Home() {
           <div className="flex flex-col gap-6">
             {/* Score Hero */}
             <div className="flex items-center gap-12">
-              <div className="relative w-[180px] h-[180px] flex items-center justify-center">
+              <div className="relative w-size-score-ring-lg h-size-score-ring-lg flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-border-primary" />
                 <div className="absolute inset-0 rounded-full border-4 border-accent-green" style={{ clipPath: "polygon(0 0, 35% 0, 35% 100%, 0 100%)" }} />
                 <div className="absolute inset-0 rounded-full border-4 border-accent-amber" style={{ clipPath: "polygon(35% 0, 100% 0, 100% 30%, 35% 30%)" }} />
@@ -173,7 +173,7 @@ export default function Home() {
                           issue.severity === "critical"
                             ? "text-accent-red"
                             : issue.severity === "warning"
-                            : "text-accent-amber"
+                            ? "text-accent-amber"
                             : "text-accent-green"
                         }`}
                       >
@@ -253,7 +253,7 @@ export default function Home() {
           <LeaderboardPreview />
 
           <div className="h-[60px]" />
-        </>
+        </div>
       )}
     </main>
   );

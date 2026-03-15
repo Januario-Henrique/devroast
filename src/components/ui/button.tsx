@@ -1,51 +1,45 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { tv, type VariantProps } from "tailwind-variants";
 
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+const button = tv({
+  base: "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
+  variants: {
+    variant: {
+      primary: "bg-accent-green text-black hover:bg-accent-green/90",
+      secondary: "border border-border-primary text-text-primary hover:border-text-secondary hover:bg-bg-elevated",
+      ghost: "text-text-secondary hover:text-text-primary hover:bg-bg-elevated",
+      destructive: "bg-accent-red text-white hover:bg-accent-red/90",
+      outline: "border border-border-primary text-text-primary hover:bg-bg-elevated",
+    },
+    size: {
+      sm: "px-3 py-1.5 text-xs",
+      md: "px-5 py-2.5 text-sm",
+      lg: "px-6 py-3 text-base",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "md",
+  },
+});
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "destructive" | "outline";
-type ButtonSize = "sm" | "md" | "lg";
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
-}
-
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-accent-green text-black hover:bg-accent-green/90",
-  secondary: "border border-border-primary text-text-primary hover:border-text-secondary hover:bg-bg-elevated",
-  ghost: "text-text-secondary hover:text-text-primary hover:bg-bg-elevated",
-  destructive: "bg-accent-red text-white hover:bg-accent-red/90",
-  outline: "border border-border-primary text-text-primary hover:bg-bg-elevated",
-};
-
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5 text-xs",
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-6 py-3 text-base",
-};
+type ButtonProps = VariantProps<typeof button> &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
+    className?: string;
+    loading?: boolean;
+  };
 
 export function Button({
-  variant = "primary",
-  size = "md",
-  loading = false,
+  variant,
+  size,
   className,
+  loading,
   children,
   disabled,
   ...props
 }: ButtonProps) {
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-200",
-        variantStyles[variant],
-        sizeStyles[size],
-        (disabled || loading) && "opacity-50 cursor-not-allowed pointer-events-none",
-        className
-      )}
+      className={button({ variant, size, className })}
       disabled={disabled || loading}
       {...props}
     >

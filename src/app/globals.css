@@ -4,6 +4,17 @@
   --font-mono: "JetBrains Mono", "IBM Plex Mono", monospace;
   --font-sans: "Inter", system-ui, sans-serif;
 
+  /* Container widths */
+  --width-container-sm: 480px;
+  --width-container-md: 768px;
+  --width-container-lg: 960px;
+  --width-container-xl: 1200px;
+
+  /* Component sizes */
+  --size-score-ring-sm: 120px;
+  --size-score-ring-md: 160px;
+  --size-score-ring-lg: 180px;
+
   /* Dark mode colors (default) */
   --color-bg-page: #0A0A0A;
   --color-bg-surface: #0F0F0F;

@@ -19,14 +19,14 @@ export function CodeInput({
   const lines = localCode.split("\n");
   const lineCount = Math.max(lines.length, 16);
 
-  const handleCodeChange = (e) => {
+  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newCode = e.target.value;
     setLocalCode(newCode);
     onCodeChange(newCode);
   };
 
   return (
-    <div className="w-[780px]">
+    <div className="max-w-container-md w-full">
       <div className="border border-border-primary bg-bg-input rounded-t-lg overflow-hidden">
         <div className="h-10 border-b border-border-primary flex items-center px-4 gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500" />

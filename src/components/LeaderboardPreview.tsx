@@ -23,7 +23,7 @@ const mockLeaderboard = [
 
 export function LeaderboardPreview() {
   return (
-    <div className="w-[960px]">
+    <div className="max-w-container-lg w-full">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <span className="text-accent-green text-sm font-bold">//</span>
