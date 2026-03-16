@@ -6,9 +6,22 @@ import Link from "next/link";
 import { CodeInput } from "@/components/CodeInput";
 import { LeaderboardPreview } from "@/components/LeaderboardPreview";
 import { ScoreRing } from "@/components/ui";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionLabel,
+  CodeWindow,
+  CodeWindowHeader,
+  CodeWindowContent,
+  IssueCard,
+  IssueCardSeverity,
+  IssueCardTitle,
+  IssueCardDescription,
+} from "@/components/ui";
 
 interface AnalysisResult {
-  score: number; // 0-10
+  score: number;
   verdict: string;
   issues: Array<{
     severity: 'critical' | 'warning' | 'good';
@@ -62,7 +75,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <Section>
             {/* Score Hero */}
             <div className="flex items-center gap-12">
               <div className="relative w-size-score-ring-lg h-size-score-ring-lg flex items-center justify-center">
@@ -100,104 +113,59 @@ export default function Home() {
             <div className="h-px bg-border-primary" />
 
             {/* Submitted Code */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-accent-green text-sm font-bold">//</span>
-                <span className="text-text-primary text-sm font-bold">your_submission</span>
-              </div>
+            <Section>
+              <SectionHeader>
+                <SectionTitle>//</SectionTitle>
+                <SectionLabel>your_submission</SectionLabel>
+              </SectionHeader>
 
-              <div className="border border-border-primary rounded-lg overflow-hidden">
-                <div className="h-10 bg-bg-surface border-b border-border-primary flex items-center px-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500 ml-1.5" />
-                  <div className="w-3 h-3 rounded-full bg-green-500 ml-1.5" />
-                </div>
-                <div className="flex bg-bg-input">
-                  <div className="w-12 bg-bg-surface border-r border-border-primary p-3 flex flex-col gap-2 items-end">
-                    {Array.from({ length: Math.max(code.split('\n').length, 1) }, (_, i) => (
-                      <span key={i} className="text-text-tertiary text-xs font-mono">
-                        {i + 1}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex-1 p-4 flex flex-col gap-2">
-                    {code.split('\n').map((line, i) => (
-                      <span key={i} className="text-text-primary text-xs font-mono">
-                        {line}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+              <CodeWindow>
+                <CodeWindowHeader />
+                <CodeWindowContent code={code.split('\n')} />
+              </CodeWindow>
+            </Section>
 
             {/* Divider */}
             <div className="h-px bg-border-primary" />
 
             {/* Analysis Section */}
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-2">
-                <span className="text-accent-green text-sm font-bold">//</span>
-                <span className="text-text-primary text-sm font-bold">detailed_analysis</span>
-              </div>
+            <Section>
+              <SectionHeader>
+                <SectionTitle>//</SectionTitle>
+                <SectionLabel>detailed_analysis</SectionLabel>
+              </SectionHeader>
 
               <div className="grid grid-cols-2 gap-5">
                 {analysis.issues.map((issue, i) => (
-                  <div
-                    key={i}
-                    className="border border-border-primary rounded-lg p-5 flex flex-col gap-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          issue.severity === "critical"
-                            ? "bg-accent-red"
-                            : issue.severity === "warning"
-                            ? "bg-accent-amber"
-                            : "bg-accent-green"
-                        }`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${
-                          issue.severity === "critical"
-                            ? "text-accent-red"
-                            : issue.severity === "warning"
-                            ? "text-accent-amber"
-                            : "text-accent-green"
-                        }`}
-                      >
-                        {issue.severity}
-                      </span>
-                    </div>
-                    <h3 className="text-text-primary text-sm font-medium">{issue.title}</h3>
-                    <p className="text-text-secondary text-xs leading-relaxed">
-                      {issue.description}
-                    </p>
-                  </div>
+                  <IssueCard key={i}>
+                    <IssueCardSeverity severity={issue.severity} />
+                    <IssueCardTitle>{issue.title}</IssueCardTitle>
+                    <IssueCardDescription>{issue.description}</IssueCardDescription>
+                  </IssueCard>
                 ))}
               </div>
-            </div>
+            </Section>
 
             {/* Divider */}
             <div className="h-px bg-border-primary" />
 
             {/* Suggested Fix */}
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-2">
-                <span className="text-accent-green text-sm font-bold">//</span>
-                <span className="text-text-primary text-sm font-bold">suggested_fix</span>
-              </div>
+            <Section>
+              <SectionHeader>
+                <SectionTitle>//</SectionTitle>
+                <SectionLabel>suggested_fix</SectionLabel>
+              </SectionHeader>
 
-              <div className="border border-border-primary rounded-lg overflow-hidden">
-                <div className="h-10 bg-bg-surface border-b border-border-primary flex items-center px-4">
+              <CodeWindow>
+                <CodeWindowHeader>
                   <span className="text-text-secondary text-xs font-medium">
                     your_code.ts → improved_code.ts
                   </span>
-                </div>
-                <div className="bg-bg-input p-4">
+                </CodeWindowHeader>
+                <CodeWindowContent>
                   <pre className="text-text-primary text-xs font-mono whitespace-pre-wrap">{analysis.suggestedFix}</pre>
-                </div>
-              </div>
+                </CodeWindowContent>
+              </CodeWindow>
 
               <div className="text-center mt-4">
                 <button
@@ -211,8 +179,8 @@ export default function Home() {
                   $ roast another code
                 </button>
               </div>
-            </div>
-          </div>
+            </Section>
+          </Section>
         </div>
       ) : (
         <div className="w-full max-w-4xl">

@@ -62,7 +62,6 @@ export function ScoreRing(props: {
     React.createElement("div", { 
       className: "absolute inset-0 rounded-full border-8 border-accent-green",
       style: { 
-        // Animated gradient based on score
         background: `conic-gradient(from -90deg at 50% 50%, ${props.score >= 8 ? 'var(--color-accent-green)' : props.score >= 6 ? 'var(--color-accent-amber)' : 'var(--color-accent-red)'} ${props.score * 3.6}deg, transparent ${props.score * 3.6}deg 360deg)`,
         transition: "background 0.3s ease"
       } 
@@ -181,6 +180,104 @@ export function LinkButton(props: {
     href: props.href,
     className: `border border-border-primary px-5 py-3 rounded-md text-text-primary text-xs flex items-center gap-2 w-fit hover:border-text-secondary hover:bg-bg-elevated transition-all duration-200 ${props.className || ""}`
   }, props.children);
+}
+
+// Compound Components using Composition Pattern
+
+// Section - for grouping content with header
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function Section({ children, className }: SectionProps) {
+  return <div className={`flex flex-col gap-6 ${className || ""}`}>{children}</div>;
+}
+
+export function SectionHeader({ children, className }: SectionProps) {
+  return <div className={`flex items-center gap-2 ${className || ""}`}>{children}</div>;
+}
+
+export function SectionTitle({ children, className }: SectionProps) {
+  return <span className={`text-accent-green text-sm font-bold ${className || ""}`}>{children}</span>;
+}
+
+export function SectionLabel({ children, className }: SectionProps) {
+  return <span className={`text-text-primary text-sm font-bold ${className || ""}`}>{children}</span>;
+}
+
+// CodeWindow - for displaying code with line numbers
+interface CodeWindowProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function CodeWindow({ children, className }: CodeWindowProps) {
+  return <div className={`border border-border-primary rounded-lg overflow-hidden ${className || ""}`}>{children}</div>;
+}
+
+export function CodeWindowHeader({ children, className }: { children?: React.ReactNode; className?: string }) {
+  return (
+    <div className={`h-10 bg-bg-surface border-b border-border-primary flex items-center px-4 ${className || ""}`}>
+      <div className="flex gap-1.5 mr-3">
+        <div className="w-3 h-3 rounded-full bg-red-500" />
+        <div className="w-3 h-3 rounded-full bg-amber-500" />
+        <div className="w-3 h-3 rounded-full bg-green-500" />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+export function CodeWindowContent({ children, code, className }: { children?: React.ReactNode; code?: string[]; className?: string }) {
+  if (code) {
+    const lines = code;
+    return (
+      <div className={`flex bg-bg-input ${className || ""}`}>
+        <div className="w-12 bg-bg-surface border-r border-border-primary p-3 flex flex-col gap-2 items-end">
+          {lines.map((_, i) => (
+            <span key={i} className="text-text-tertiary text-xs font-mono">{i + 1}</span>
+          ))}
+        </div>
+        <div className="flex-1 p-4 flex flex-col gap-2">
+          {lines.map((line, i) => (
+            <span key={i} className="text-text-primary text-xs font-mono">{line}</span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return <div className={`bg-bg-input p-4 ${className || ""}`}>{children}</div>;
+}
+
+// IssueCard - for displaying issues with severity
+interface IssueCardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function IssueCard({ children, className }: IssueCardProps) {
+  return <div className={`border border-border-primary rounded-lg p-5 flex flex-col gap-3 ${className || ""}`}>{children}</div>;
+}
+
+export function IssueCardSeverity({ severity, className }: { severity: 'critical' | 'warning' | 'good'; className?: string }) {
+  const colorClass = severity === 'critical' ? 'bg-accent-red' : severity === 'warning' ? 'bg-accent-amber' : 'bg-accent-green';
+  const textColorClass = severity === 'critical' ? 'text-accent-red' : severity === 'warning' ? 'text-accent-amber' : 'text-accent-green';
+  
+  return (
+    <div className={`flex items-center gap-2 ${className || ""}`}>
+      <div className={`w-2 h-2 rounded-full ${colorClass}`} />
+      <span className={`text-xs font-medium ${textColorClass}`}>{severity}</span>
+    </div>
+  );
+}
+
+export function IssueCardTitle({ children, className }: SectionProps) {
+  return <h3 className={`text-text-primary text-sm font-medium ${className || ""}`}>{children}</h3>;
+}
+
+export function IssueCardDescription({ children, className }: SectionProps) {
+  return <p className={`text-text-secondary text-xs leading-relaxed ${className || ""}`}>{children}</p>;
 }
 
 // Typography components matching design specs
