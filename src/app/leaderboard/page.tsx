@@ -1,11 +1,53 @@
 import Link from "next/link";
-import { getLeaderboardEntries, addLeaderboardEntry } from "@/lib/leaderboard";
+
+const leaderboardData = [
+  {
+    id: "1",
+    rank: 1,
+    score: 1.2,
+    code: ["eval(prompt(\"enter code\"))", "document.write(response)", "// trust the user lol"],
+    language: "javascript",
+    lines: 3,
+  },
+  {
+    id: "2",
+    rank: 2,
+    score: 1.8,
+    code: ["if (x == true) { return true; }", "else if (x == false) { return false; }", "else { return !false; }"],
+    language: "typescript",
+    lines: 3,
+  },
+  {
+    id: "3",
+    rank: 3,
+    score: 2.1,
+    code: ["SELECT * FROM users WHERE 1=1", "-- TODO: add authentication"],
+    language: "sql",
+    lines: 2,
+  },
+  {
+    id: "4",
+    rank: 4,
+    score: 2.5,
+    code: ["function loop() { loop(); }", "// stack overflow incoming"],
+    language: "javascript",
+    lines: 2,
+  },
+  {
+    id: "5",
+    rank: 5,
+    score: 3.0,
+    code: ["const x = 1;", "x = 2;", "// const is mutable apparently"],
+    language: "javascript",
+    lines: 3,
+  },
+];
 
 export default function LeaderboardPage() {
-  const leaderboardData = getLeaderboardEntries();
+  const avgScore = (leaderboardData.reduce((sum, entry) => sum + entry.score, 0) / leaderboardData.length).toFixed(1);
 
   return (
-    <main className="flex flex-col items-center pt-10 px-10 pb-20">
+    <main className="flex flex-col items-center pt-10 px-10 pb-20 w-full">
       <div className="w-full max-w-4xl">
         <div className="flex flex-col gap-4 mb-10">
           <div className="flex items-center gap-3">
@@ -20,16 +62,7 @@ export default function LeaderboardPage() {
           <div className="flex items-center gap-2 text-text-tertiary text-xs">
             <span>{leaderboardData.length} submissions</span>
             <span>·</span>
-            <span>
-              {leaderboardData.length > 0
-                ? (
-                  leaderboardData.reduce((sum, entry) => sum + entry.score, 0) /
-                  leaderboardData.length
-                ).toFixed(1)
-                : "0.0"
-              }
-            </span>
-            <span>/10</span>
+            <span>{avgScore}/10</span>
           </div>
         </div>
 

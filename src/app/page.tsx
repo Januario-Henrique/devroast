@@ -1,7 +1,6 @@
 "use client";
 
 import { analyzeCode } from "@/lib/analysis/analyzeCode";
-import { addLeaderboardEntry } from "@/lib/leaderboard";
 import { useState } from "react";
 import Link from "next/link";
 import { CodeInput } from "@/components/CodeInput";
@@ -34,16 +33,6 @@ export default function Home() {
     try {
       const result = analyzeCode(code);
       setAnalysis(result);
-      
-      // Add to leaderboard
-      addLeaderboardEntry({
-        score: result.score,
-        code: code.split('\n'),
-        language: result.language,
-        lines: result.lines,
-        rank: 0, // Temporary rank, will be recalculated in addLeaderboardEntry
-      });
-      
       setShowResults(true);
     } catch (error) {
       console.error("Analysis failed:", error);
