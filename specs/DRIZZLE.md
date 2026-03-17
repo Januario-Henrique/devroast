@@ -1,11 +1,11 @@
 # Drizzle ORM Specification
 
 ## Overview
-Database schema for DevRoast application using Drizzle ORM with PostgreSQL.
+Database schema for DevRoast using Drizzle ORM with PostgreSQL. Based on the official NLW repo.
 
 ## Tables
 
-### submissions
+### roasts
 Main table for storing code submissions and their analysis results.
 
 | Column | Type | Constraints | Description |
@@ -13,54 +13,45 @@ Main table for storing code submissions and their analysis results.
 | id | uuid | PK, default gen_random_uuid() | Unique identifier |
 | code | text | NOT NULL | Source code submitted |
 | language | varchar(50) | NOT NULL | Programming language |
-| score | decimal(3,1) | NOT NULL | Score from 0-10 |
-| verdict | varchar(50) | NOT NULL | Verdict category |
-| issues | jsonb | | Array of issues found |
+| line_count | integer | NOT NULL | Number of code lines |
+| roast_mode | boolean | DEFAULT false, NOT NULL | Sarcasm mode enabled |
+| score | real | NOT NULL | Score from 0-10 |
+| verdict | verdict_enum | NOT NULL | Verdict category |
+| roast_quote | text | | Humor roast quote |
 | suggested_fix | text | | AI-generated fix suggestion |
-| lines_count | integer | NOT NULL | Number of code lines |
-| created_at | timestamp | DEFAULT now() | Submission timestamp |
+| created_at | timestamp | DEFAULT now(), NOT NULL | Submission timestamp |
 
-### users (future)
-Optional table for user accounts (not implemented yet).
+### analysis_items
+Related items for each roast (issues found).
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| id | uuid | PK | Unique identifier |
-| email | varchar(255) | UNIQUE, NOT NULL | User email |
-| username | varchar(100) | UNIQUE, NOT NULL | Username |
-| created_at | timestamp | DEFAULT now() | Account creation |
+| id | uuid | PK, default gen_random_uuid() | Unique identifier |
+| roast_id | uuid | FK -> roasts.id, NOT NULL, cascade | Reference to roast |
+| severity | severity_enum | NOT NULL | Issue severity |
+| title | varchar(200) | NOT NULL | Issue title |
+| description | text | NOT NULL | Issue description |
+| order | integer | NOT NULL | Display order |
 
 ## Enums
 
 ### verdict_enum
 ```sql
 CREATE TYPE verdict AS ENUM (
-  'excellent',
-  'good', 
-  'needs_improvement',
-  'needs_serious_help'
+  'needs_serious_help',
+  'rough_around_edges',
+  'decent_code',
+  'solid_work',
+  'exceptional'
 );
 ```
 
-### language_enum
+### severity_enum
 ```sql
-CREATE TYPE language AS ENUM (
-  'javascript',
-  'typescript',
-  'python',
-  'java',
-  'cpp',
-  'csharp',
-  'go',
-  'rust',
-  'php',
-  'ruby',
-  'swift',
-  'kotlin',
-  'sql',
-  'html',
-  'css',
-  'json'
+CREATE TYPE severity AS ENUM (
+  'critical',
+  'warning',
+  'good'
 );
 ```
 
@@ -68,13 +59,7 @@ CREATE TYPE language AS ENUM (
 
 ```sql
 -- Leaderboard queries (ordered by score)
-CREATE INDEX idx_submissions_score ON submissions(score ASC);
-
--- Filter by language
-CREATE INDEX idx_submissions_language ON submissions(language);
-
--- Recent submissions
-CREATE INDEX idx_submissions_created_at ON submissions(created_at DESC);
+CREATE INDEX roasts_score_idx ON roasts(score);
 ```
 
 ## Docker Compose
@@ -85,32 +70,41 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: devroast-db
-    environment:
-      POSTGRES_USER: devroast
-      POSTGRES_PASSWORD: devroast123
-      POSTGRES_DB: devroast
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: devroast
+      POSTGRES_PASSWORD: devroast
+      POSTGRES_DB: devroast
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - devroast_pgdata:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  devroast_pgdata:
 ```
 
 ## Drizzle Config
 
 ```typescript
 // drizzle.config.ts
-import { defineConfig } from 'drizzle-kit';
+import { config } from "dotenv";
+import { defineConfig } from "drizzle-kit";
+
+config({ path: ".env.local" });
+
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is not set");
+}
 
 export default defineConfig({
-  schema: './src/lib/db/schema.ts',
-  out: './drizzle',
-  dialect: 'postgresql',
+  out: "./drizzle",
+  schema: "./src/db/schema.ts",
+  dialect: "postgresql",
+  casing: "snake_case",
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgresql://devroast:devroast123@localhost:5432/devroast',
+    url: databaseUrl,
   },
 });
 ```
@@ -118,33 +112,70 @@ export default defineConfig({
 ## Schema File
 
 ```typescript
-// src/lib/db/schema.ts
-import { pgTable, uuid, text, varchar, decimal, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
+// src/db/schema.ts
+import {
+  boolean,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  real,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
-export const submissions = pgTable('submissions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  code: text('code').notNull(),
-  language: varchar('language', { length: 50 }).notNull(),
-  score: decimal('score', { precision: 3, scale: 1 }).notNull(),
-  verdict: varchar('verdict', { length: 50 }).notNull(),
-  issues: jsonb('issues'),
-  suggestedFix: text('suggested_fix'),
-  linesCount: integer('lines_count').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
+export const verdictEnum = pgEnum("verdict", [
+  "needs_serious_help",
+  "rough_around_edges",
+  "decent_code",
+  "solid_work",
+  "exceptional",
+]);
+
+export const severityEnum = pgEnum("severity", ["critical", "warning", "good"]);
+
+export const roasts = pgTable(
+  "roasts",
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    code: text().notNull(),
+    language: varchar({ length: 50 }).notNull(),
+    lineCount: integer().notNull(),
+    roastMode: boolean().default(false).notNull(),
+    score: real().notNull(),
+    verdict: verdictEnum().notNull(),
+    roastQuote: text(),
+    suggestedFix: text(),
+    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("roasts_score_idx").on(table.score)],
+);
+
+export const analysisItems = pgTable("analysis_items", {
+  id: uuid().defaultRandom().primaryKey(),
+  roastId: uuid()
+    .references(() => roasts.id, { onDelete: "cascade" })
+    .notNull(),
+  severity: severityEnum().notNull(),
+  title: varchar({ length: 200 }).notNull(),
+  description: text().notNull(),
+  order: integer().notNull(),
 });
-
-export type Submission = typeof submissions.$inferSelect;
-export type NewSubmission = typeof submissions.$inferInsert;
 ```
 
 ## Commands
 
 ```bash
+# Install dependencies (uses pnpm)
+pnpm install
+
 # Generate migrations
-npm run db:generate
+pnpm db:generate
 
 # Push to database
-npm run db:push
+pnpm db:push
 
 # Start PostgreSQL
 docker-compose up -d
@@ -153,5 +184,5 @@ docker-compose up -d
 ## Environment Variables
 
 ```
-DATABASE_URL=postgresql://devroast:devroast123@localhost:5432/devroast
+DATABASE_URL=postgresql://devroast:devroast@localhost:5432/devroast
 ```

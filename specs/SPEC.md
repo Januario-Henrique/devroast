@@ -2,77 +2,71 @@
 
 ## Research Summary
 
+Based on the official NLW Rocketseat repo, we should use **Shiki** for syntax highlighting, not @uiw/react-textarea-code-editor.
+
 ### Options Evaluated
 
-| Library | Size | Features | Best For |
-|---------|------|----------|----------|
-| **Monaco Editor** | ~2.5MB | Full IDE features, autocomplete, minimap | Rich editing experience |
-| **CodeMirror 6** | ~500KB | Modular, extensible, good performance | Modern, extensible apps |
-| **react-ace** | ~1MB | Ace editor wrapper, many themes | Quick setup |
-| **@uiw/react-textarea-code-editor** | ~50KB | Lightweight, simple textarea overlay | Simple embedding |
-| **prism-code-editor** | ~20KB | Minimal, Prism-based | Lightweight needs |
-| **react-syntax-highlighter** | ~300KB | Display only, read-only | Just displaying code |
+| Library | Used in Official Repo | Notes |
+|---------|----------------------|-------|
+| **Shiki** | ✅ Yes | Official repo uses Shiki with vesper theme |
+| highlight.js | ✅ Yes | Used for language detection |
+| @uiw/react-textarea-code-editor | ❌ No | Not used in official repo |
 
-### Selected Option: `@uiw/react-textarea-code-editor`
+### Selected Approach: Shiki + highlight.js
 
-**Reasoning:**
-- Lightweight (~50KB)
-- Simple to integrate
-- Supports automatic syntax highlighting
-- Works well with our use case (paste code + view highlighted)
-- Good theme support
-- Supports manual language selection
-
-### Language Detection
-
-Use `highlight.js` or `flourite` for auto-detection:
-- `flourite` - Lightweight, no dependencies
-- `highlight.js` - More accurate, larger
+The official repo uses:
+- **Shiki** - For syntax highlighting in the code editor
+- **highlight.js** - For auto-detecting programming language
+- **useShikiHighlighter hook** - Custom hook for highlighting
+- **useLanguageDetection hook** - For auto-detecting language
 
 ## Implementation Spec
 
-### Features
-1. **Code Input** - Textarea with syntax highlighting
-2. **Language Auto-detection** - Detect language automatically on paste
-3. **Language Selector** - Manual language override dropdown
-4. **Themes** - Match app's dark/light theme
-
-### File: `src/components/ui/CodeEditor.tsx`
-
-```tsx
-import { useState, useEffect } from "react";
-import CodeEditor from "@uiw/react-textarea-code-editor";
-
-interface CodeEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  language?: string;
-  onLanguageChange?: (language: string) => void;
+### Dependencies (from official repo)
+```json
+{
+  "shiki": "4.0.1",
+  "highlight.js": "11.11.1"
 }
-
-const SUPPORTED_LANGUAGES = [
-  "javascript", "typescript", "python", "java", 
-  "cpp", "go", "rust", "csharp", "php", 
-  "ruby", "swift", "kotlin", "sql", "html", "css", "json"
-];
 ```
 
-### Language Detection Strategy
-1. On paste, run detection
-2. If confidence > 70%, auto-select
-3. User can override via dropdown
+### Files to Create
+
+1. **src/lib/languages.ts** - Language definitions mapping
+2. **src/hooks/use-shiki-highlighter.ts** - Shiki hook for highlighting
+3. **src/hooks/use-language-detection.ts** - Language detection hook
+4. **src/components/code-editor.tsx** - Code editor component
+
+### Code Editor Features
+
+1. **Syntax Highlighting** - Shiki with vesper theme
+2. **Language Detection** - Auto-detect using highlight.js
+3. **Manual Override** - Dropdown to select language manually
+4. **Line Numbers** - Synchronized with textarea
+5. **Character Count** - Show limit (2000 chars)
+6. **Scroll Sync** - Highlighted overlay syncs with textarea
+
+### Language Options (from official repo)
+- JavaScript, TypeScript, JSX, TSX
+- Python, Go, Rust
+- Java, Ruby, PHP
+- SQL, Shell (bash)
+- HTML, CSS
+- JSON, YAML, Markdown
+- C, C++, C#
+- Swift, Kotlin, Dart
 
 ## TODO
 
-- [ ] Install `@uiw/react-textarea-code-editor`
-- [ ] Install `flourite` for language detection
-- [ ] Create `CodeEditor` component in `src/components/ui/`
+- [ ] Install shiki and highlight.js
+- [ ] Create `src/lib/languages.ts`
+- [ ] Create `src/hooks/use-shiki-highlighter.ts`
+- [ ] Create `src/hooks/use-language-detection.ts`
+- [ ] Create `src/components/code-editor.tsx`
+- [ ] Replace existing CodeInput with new CodeEditor
 - [ ] Add language selector dropdown
-- [ ] Implement auto-detection on paste
-- [ ] Integrate with existing `CodeInput.tsx`
-- [ ] Test with multiple languages
 
 ## References
-- ray.so: https://github.com/raycast/ray-so
-- @uiw/react-textarea-code-editor: https://www.npmjs.com/package/@uiw/react-textarea-code-editor
-- flourite: https://github.com/tejasq/flourite
+- Official repo: https://github.com/rocketseat-education/nlw-operator-fullstack-devroast
+- Shiki: https://shiki.style
+- highlight.js: https://highlightjs.org
