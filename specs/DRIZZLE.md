@@ -1,7 +1,10 @@
 # Drizzle ORM Specification
 
+## Status
+✅ Implemented
+
 ## Overview
-Database schema for DevRoast using Drizzle ORM with PostgreSQL. Based on the official NLW repo.
+Database schema for DevRoast using Drizzle ORM with PostgreSQL.
 
 ## Tables
 
@@ -55,134 +58,37 @@ CREATE TYPE severity AS ENUM (
 );
 ```
 
-## Indexes
+## Notes
+- Using Drizzle's `casing: "snake_case"` config - column names written in camelCase are auto-converted
+- No native Drizzle relations - queries use raw SQL and joins
+- No unnecessary indexes - only FK/PK constraints
 
-```sql
--- Leaderboard queries (ordered by score)
-CREATE INDEX roasts_score_idx ON roasts(score);
-```
-
-## Docker Compose
-
-```yaml
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:16-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: devroast
-      POSTGRES_PASSWORD: devroast
-      POSTGRES_DB: devroast
-    volumes:
-      - devroast_pgdata:/var/lib/postgresql/data
-
-volumes:
-  devroast_pgdata:
-```
-
-## Drizzle Config
-
-```typescript
-// drizzle.config.ts
-import { config } from "dotenv";
-import { defineConfig } from "drizzle-kit";
-
-config({ path: ".env.local" });
-
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not set");
-}
-
-export default defineConfig({
-  out: "./drizzle",
-  schema: "./src/db/schema.ts",
-  dialect: "postgresql",
-  casing: "snake_case",
-  dbCredentials: {
-    url: databaseUrl,
-  },
-});
-```
-
-## Schema File
-
-```typescript
-// src/db/schema.ts
-import {
-  boolean,
-  index,
-  integer,
-  pgEnum,
-  pgTable,
-  real,
-  text,
-  timestamp,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-
-export const verdictEnum = pgEnum("verdict", [
-  "needs_serious_help",
-  "rough_around_edges",
-  "decent_code",
-  "solid_work",
-  "exceptional",
-]);
-
-export const severityEnum = pgEnum("severity", ["critical", "warning", "good"]);
-
-export const roasts = pgTable(
-  "roasts",
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    code: text().notNull(),
-    language: varchar({ length: 50 }).notNull(),
-    lineCount: integer().notNull(),
-    roastMode: boolean().default(false).notNull(),
-    score: real().notNull(),
-    verdict: verdictEnum().notNull(),
-    roastQuote: text(),
-    suggestedFix: text(),
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [index("roasts_score_idx").on(table.score)],
-);
-
-export const analysisItems = pgTable("analysis_items", {
-  id: uuid().defaultRandom().primaryKey(),
-  roastId: uuid()
-    .references(() => roasts.id, { onDelete: "cascade" })
-    .notNull(),
-  severity: severityEnum().notNull(),
-  title: varchar({ length: 200 }).notNull(),
-  description: text().notNull(),
-  order: integer().notNull(),
-});
-```
+## Files Created
+- `src/db/schema.ts` - Table definitions with enums
+- `src/db/index.ts` - Database connection pool
+- `drizzle.config.ts` - Drizzle Kit configuration
+- `docker-compose.yml` - PostgreSQL setup
+- `.env.example` - Environment variables template
 
 ## Commands
-
 ```bash
-# Install dependencies (uses pnpm)
-pnpm install
-
-# Generate migrations
-pnpm db:generate
-
-# Push to database
-pnpm db:push
-
 # Start PostgreSQL
 docker-compose up -d
+
+# Copy env file
+cp .env.example .env.local
+
+# Generate migrations
+npm run db:generate
+
+# Push schema to database
+npm run db:push
+
+# Run migrations
+npm run db:migrate
 ```
 
 ## Environment Variables
-
 ```
 DATABASE_URL=postgresql://devroast:devroast@localhost:5432/devroast
 ```

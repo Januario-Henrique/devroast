@@ -58,13 +58,13 @@ The official repo uses:
 
 ## TODO
 
-- [ ] Install shiki and highlight.js
-- [ ] Create `src/lib/languages.ts`
-- [ ] Create `src/hooks/use-shiki-highlighter.ts`
-- [ ] Create `src/hooks/use-language-detection.ts`
-- [ ] Create `src/components/code-editor.tsx`
-- [ ] Replace existing CodeInput with new CodeEditor
-- [ ] Add language selector dropdown
+- [x] Install shiki and highlight.js
+- [x] Create `src/lib/languages.ts`
+- [x] Create `src/hooks/use-shiki-highlighter.ts`
+- [x] Create `src/hooks/use-language-detection.ts`
+- [x] Create `src/components/code-editor.tsx`
+- [x] Replace existing CodeInput with new CodeEditor
+- [x] Add language selector dropdown
 
 ## References
 - Official repo: https://github.com/rocketseat-education/nlw-operator-fullstack-devroast
