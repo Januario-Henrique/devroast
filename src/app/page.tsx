@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CodeEditor } from "@/components/code-editor";
 import { LeaderboardPreview } from "@/components/LeaderboardPreview";
+import { MetricsClient } from "@/components/MetricsClient";
 import {
 	CodeWindow,
 	CodeWindowContent,
@@ -236,11 +237,7 @@ export default function Home() {
 							</button>
 						</div>
 
-						<div className="mt-8 flex items-center justify-center gap-6 text-text-tertiary text-xs">
-							<span>2,847 codes roasted</span>
-							<span>·</span>
-							<span>avg score: 4.2/10</span>
-						</div>
+						<MetricsClient />
 					</div>
 
 					<div className="h-[60px]" />
