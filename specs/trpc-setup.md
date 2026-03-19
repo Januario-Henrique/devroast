@@ -1,7 +1,7 @@
 # tRPC Setup
 
 ## Status
-TODO
+✅ Complete (metrics only)
 
 ## Overview
 Integrate tRPC as the API layer for DevRoast, enabling type-safe communication between client and server components.
@@ -22,30 +22,30 @@ src/
 │       ├── query-client.ts      # QueryClient factory
 │       ├── client.tsx           # Client hooks & provider
 │       ├── server.ts            # Server caller
+│       ├── types.ts             # Type exports
 │       └── routers/
-│           ├── _app.ts          # Main router
-│           └── roast.ts         # Roast procedures
+│           └── _app.ts          # Main router
+└── components/
+    ├── MetricsClient.tsx        # Client component with trpc hook
+    ├── MetricsDisplay.tsx       # Animated numbers with number-flow
+    ├── MetricsSkeleton.tsx      # Loading skeleton
+    ├── MetricsServer.tsx        # Server component
+    └── MetricsSection.tsx       # Suspense wrapper
 ```
 
 ## Dependencies
 
 ```bash
-npm install @trpc/server @trpc/client @trpc/tanstack-react-query @tanstack/react-query zod client-only server-only
+npm install @trpc/server @trpc/client @trpc/tanstack-react-query @tanstack/react-query zod client-only server-only number-flow
 ```
 
-## Implementation Steps
+## Implemented Procedures
 
-1. Install dependencies
-2. Create `src/lib/trpc/init.ts` - tRPC init with context
-3. Create `src/lib/trpc/query-client.ts` - QueryClient factory
-4. Create `src/lib/trpc/client.tsx` - Client provider
-5. Create `src/lib/trpc/server.ts` - Server caller
-6. Create `src/lib/trpc/routers/_app.ts` - Main router
-7. Create `src/lib/trpc/routers/roast.ts` - Roast CRUD procedures
-8. Create `src/app/api/trpc/[trpc]/route.ts` - API handler
-9. Update `src/app/layout.tsx` - Add TRPCProvider
-10. Create initial roast procedures (create, getTop, getById)
+### metrics
+Returns aggregated metrics from the database.
+- Returns: `{ totalRoasts: number, avgScore: number }`
 
 ## References
 - https://trpc.io/docs/client/nextjs/app-router-setup
 - https://trpc.io/docs/client/react/server-components
+- https://number-flow.barvian.me/
