@@ -1,7 +1,12 @@
+import { faker } from "@faker-js/faker";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { faker } from "@faker-js/faker";
-import { roasts, analysisItems, verdictEnum, severityEnum } from "./schema";
+import {
+	analysisItems,
+	roasts,
+	severityEnum,
+	type verdictEnum,
+} from "./schema";
 
 const { Pool } = pg;
 
@@ -123,8 +128,16 @@ async function seed() {
 
 		items.push({
 			roastId: roast.id,
-			severity: faker.helpers.arrayElement(["critical", "warning", "good"] as const),
-			title: faker.helpers.arrayElement([...CRITICAL_ISSUES, ...WARNING_ISSUES, ...GOOD_ISSUES]),
+			severity: faker.helpers.arrayElement([
+				"critical",
+				"warning",
+				"good",
+			] as const),
+			title: faker.helpers.arrayElement([
+				...CRITICAL_ISSUES,
+				...WARNING_ISSUES,
+				...GOOD_ISSUES,
+			]),
 			description: faker.lorem.sentence(),
 			order: items.length + 1,
 		});
@@ -176,21 +189,24 @@ function getVerdict(score: number): (typeof verdictEnum.enumValues)[number] {
 }
 
 function getRoastQuote(score: number): string {
-	if (score >= 8) return faker.helpers.arrayElement([
-		"Wow, this code is actually decent... did you copy it from Stack Overflow?",
-		"I'm impressed. You might actually know what you're doing.",
-		"This is... surprisingly good. My compliments to your code.",
-	]);
-	if (score >= 6) return faker.helpers.arrayElement([
-		"Not bad, but I've seen worse. That's not a compliment.",
-		"This code is like a microwave burrito - it works, but barely.",
-		"You're on the right track, keep practicing.",
-	]);
-	if (score >= 4) return faker.helpers.arrayElement([
-		"This code looks like it was written during a power outage in 2005.",
-		"I have seen better code in a kindergarten drawing.",
-		"Did you write this with your eyes closed?",
-	]);
+	if (score >= 8)
+		return faker.helpers.arrayElement([
+			"Wow, this code is actually decent... did you copy it from Stack Overflow?",
+			"I'm impressed. You might actually know what you're doing.",
+			"This is... surprisingly good. My compliments to your code.",
+		]);
+	if (score >= 6)
+		return faker.helpers.arrayElement([
+			"Not bad, but I've seen worse. That's not a compliment.",
+			"This code is like a microwave burrito - it works, but barely.",
+			"You're on the right track, keep practicing.",
+		]);
+	if (score >= 4)
+		return faker.helpers.arrayElement([
+			"This code looks like it was written during a power outage in 2005.",
+			"I have seen better code in a kindergarten drawing.",
+			"Did you write this with your eyes closed?",
+		]);
 	return faker.helpers.arrayElement([
 		"This code makes me question your career choices.",
 		"I've seen more organized chaos in a dumpster fire.",

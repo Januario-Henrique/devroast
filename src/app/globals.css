@@ -46,45 +46,45 @@
 
 /* Light mode overrides */
 @media (prefers-color-scheme: light) {
-  :root {
-    --color-bg-page: #F2F3F0;
-    --color-bg-surface: #FFFFFF;
-    --color-bg-elevated: #FFFFFF;
-    --color-bg-input: #FFFFFF;
+	:root {
+		--color-bg-page: #f2f3f0;
+		--color-bg-surface: #ffffff;
+		--color-bg-elevated: #ffffff;
+		--color-bg-input: #ffffff;
 
-    --color-border-primary: #CBCCC9;
-    --color-border-secondary: #E7E8E5;
+		--color-border-primary: #cbccc9;
+		--color-border-secondary: #e7e8e5;
 
-    --color-text-primary: #111111;
-    --color-text-secondary: #666666;
-    --color-text-tertiary: #666666;
+		--color-text-primary: #111111;
+		--color-text-secondary: #666666;
+		--color-text-tertiary: #666666;
 
-    --color-accent-green: #10B981;
-    --color-accent-red: #EF4444;
-    --color-accent-amber: #F59E0B;
-    --color-accent-cyan: #06B6D4;
-    --color-accent-blue: #3B82F6;
-    --color-accent-orange: #F97316;
+		--color-accent-green: #10b981;
+		--color-accent-red: #ef4444;
+		--color-accent-amber: #f59e0b;
+		--color-accent-cyan: #06b6d4;
+		--color-accent-blue: #3b82f6;
+		--color-accent-orange: #f97316;
 
-    --color-syn-keyword: #C678DD;
-    --color-syn-function: #61AFEF;
-    --color-syn-variable: #E06C75;
-    --color-syn-operator: #ABB2BF;
-    --color-syn-number: #D19A66;
-    --color-syn-string: #E5C07B;
-    --color-syn-property: #98C379;
-  }
+		--color-syn-keyword: #c678dd;
+		--color-syn-function: #61afef;
+		--color-syn-variable: #e06c75;
+		--color-syn-operator: #abb2bf;
+		--color-syn-number: #d19a66;
+		--color-syn-string: #e5c07b;
+		--color-syn-property: #98c379;
+	}
 }
 
 @layer base {
-  :root {
-    --background: var(--color-bg-page);
-    --foreground: var(--color-text-primary);
-  }
+	:root {
+		--background: var(--color-bg-page);
+		--foreground: var(--color-text-primary);
+	}
 
-  body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-mono);
-  }
+	body {
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-mono);
+	}
 }
